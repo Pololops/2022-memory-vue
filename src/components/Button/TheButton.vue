@@ -4,15 +4,11 @@ const props = defineProps({
     type: String,
     required: true,
   },
-  onClick: {
-    type: Function,
-    required: true,
-  },
 });
 </script>
 
 <template>
-  <button class="modal__button" @click="props.onClick">
+  <button class="modal__button">
     {{ props.text }}
   </button>
 </template>
