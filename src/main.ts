@@ -5,4 +5,4 @@ import "./assets/styles/_reset.css";
 import "./assets/styles/_vars.scss";
 import "./assets/styles/global.css";
 
-createApp(App).mount("#app");
+createApp(App).mount("#root");

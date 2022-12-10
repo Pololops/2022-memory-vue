@@ -71,7 +71,7 @@ watch(turn, () => {
         :text="
           turnNumber < 1 ? 'Commencer une partie' : 'Recommencer une partie'
         "
-        @click="isModalVisible = !isModalVisible"
+        @click="clickButtonHandler"
       ></Button>
     </component>
   </div>
