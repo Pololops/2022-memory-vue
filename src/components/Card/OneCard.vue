@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import "./styles.scss";
-import { ref } from "vue";
+import { useStore } from "@/store";
 
 const props = defineProps({
   id: {
@@ -28,12 +28,11 @@ const props = defineProps({
   },
 });
 
-const gameIsOn = ref(false);
-const turn = ref([]);
+const store = useStore();
 
 function onClickHandler() {
-  if (gameIsOn.value && !props.isFlipped && turn.value.length < 2) {
-    console.log(props.id);
+  if (store.gameIsOn && !props.isFlipped && store.turn.length < 2) {
+    store.flipCard(props.id);
   }
 }
 </script>
@@ -41,14 +40,8 @@ function onClickHandler() {
 <template>
   <li
     class="card"
-    :class="`${
-      isFlipped
-        ? ' flipped'
-        : '' + isSucceed
-        ? ' success'
-        : '' + isFailed
-        ? ' fail'
-        : ''
+    :class="`${isFlipped ? ` flipped` : ``}${isSucceed ? ` success` : ``}${
+      isFailed ? ` fail` : ``
     }`"
     @click="onClickHandler"
   >

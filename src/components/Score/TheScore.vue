@@ -1,12 +1,12 @@
 <script setup lang="ts">
+import { useStore } from "@/store";
 import "./styles.scss";
-import { ref } from "vue";
 
-const score = ref(0);
+const store = useStore();
 </script>
 
 <template>
   <p class="score">
-    Votre score est de {{ score }} point{{ score > 1 ? "s" : "" }}
+    Votre score est de {{ store.score }} point{{ store.score > 1 ? "s" : "" }}
   </p>
 </template>

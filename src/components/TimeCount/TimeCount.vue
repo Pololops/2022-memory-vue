@@ -1,38 +1,43 @@
 <script setup lang="ts">
 import "./styles.scss";
-import { ref, onUnmounted, watch } from "vue";
+import { ref, onUnmounted, watch, watchEffect } from "vue";
+import { useStore } from "@/store";
 import ProgressBar from "./ProgressBar.vue";
 
-const maxTime = ref(100);
-const isModalVisible = ref(true);
-const time = ref(maxTime);
+const store = useStore();
 
-onUnmounted(() => {
-  clearInterval(timerInterval);
-});
+const time = ref(store.counter);
+const isCounterRunning = ref(false);
 
 let timerInterval: ReturnType<typeof setInterval>;
-watch(isModalVisible, () => {
-  if (!isModalVisible.value) {
+watchEffect(() => {
+  if (!store.isModalVisible) {
+    time.value = store.counter;
+    isCounterRunning.value = true;
     // Decrease time by 1 every second
     timerInterval = setInterval(() => {
-      time.value -= 1 / maxTime.value;
+      time.value -= 1 / 100;
     }, 10);
   } else {
-    time.value = maxTime.value;
+    clearInterval(timerInterval);
+    isCounterRunning.value = false;
   }
 });
 
 watch(time, () => {
   if (time.value <= 0) {
     clearInterval(timerInterval);
-    // dispatch(stopGame());
+    store.stopGame();
   }
 });
 </script>
 
 <template>
   <div class="time-counter">
-    <ProgressBar :time="time" :maxTime="maxTime" />
+    <ProgressBar
+      :time="time"
+      :maxTime="store.counter"
+      :isCounterRunning="isCounterRunning"
+    />
   </div>
 </template>

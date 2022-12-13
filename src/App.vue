@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, onMounted, watch, type Ref } from "vue";
+import { onMounted, watchEffect } from "vue";
+import { useStore } from "./store/index";
 
 import cards from "./assets/data/cards.json";
 
@@ -10,42 +11,35 @@ import Modal from "./components/Modal/TheModal.vue";
 import Message from "./components/Message/TheMessage.vue";
 import Button from "./components/Button/TheButton.vue";
 
-type Turn = [] | { id: number; name: string }[];
-
-const turn: Ref<Turn> = ref([]);
-const turnNumber = ref(0);
-const score = ref(0);
-const isModalVisible = ref(true);
+const store = useStore();
 
 function clickButtonHandler() {
-  //dispatch(startGame());
-  console.log("Oh Putain !!!");
+  store.startGame();
 }
 
 onMounted(() => {
-  // dispatch(getScoreFromLocalStorage());
-  // dispatch(getCards(cards));
+  store.getCards(cards);
 });
 
-watch(turn, () => {
-  if (turn.value.length > 1) {
+watchEffect(() => {
+  if (store.turn.length > 1) {
     const isTurnWin =
-      turn.value[0].name === turn.value[1].name &&
-      turn.value[0].id !== turn.value[1].id;
+      store.turn[0].name === store.turn[1].name &&
+      store.turn[0].id !== store.turn[1].id;
 
-    // dispatch(testCombination());
+    store.testCombination();
 
     let timer = 0;
     if (isTurnWin) {
-      // dispatch(increaseScore());
-      // dispatch(searchNotFoundCard());
+      store.increaseScore();
+      store.searchNotFoundCard();
     } else {
       timer = 1500;
-      // dispatch(decreaseScore());
+      store.decreaseScore();
     }
 
     setTimeout(() => {
-      // dispatch(initNextTurn());
+      store.initNextTurn();
     }, timer);
   }
 });
@@ -57,19 +51,21 @@ watch(turn, () => {
     <Board />
     <TimeCount />
 
-    <component :is="isModalVisible && Modal">
+    <component :is="store.isModalVisible && Modal">
       <Message
         :text="
-          turnNumber < 1
+          store.turnNumber < 1
             ? 'Bienvenue dans le jeu du Memory !'
-            : `La partie est terminée ! Vous avez obtenu ${score} point${
-                score > 1 ? 's' : ''
+            : `La partie est terminée ! Vous avez obtenu ${store.score} point${
+                store.score > 1 ? 's' : ''
               }`
         "
       />
       <Button
         :text="
-          turnNumber < 1 ? 'Commencer une partie' : 'Recommencer une partie'
+          store.turnNumber < 1
+            ? 'Commencer une partie'
+            : 'Recommencer une partie'
         "
         @click="clickButtonHandler"
       ></Button>
